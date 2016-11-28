@@ -204,7 +204,7 @@ class JobScheduler @Inject()(val taskManager: TaskManager,
     }
   }
 
-  def handleStartedTask(taskStatus: TaskStatus) {
+  def handleStartedTask(taskStatus: TaskStatus, count: Int) {
     val taskId = taskStatus.getTaskId.getValue
     if (!TaskUtils.isValidVersion(taskId)) {
       log.warning("Found old or invalid task, ignoring!")
@@ -218,7 +218,7 @@ class JobScheduler @Inject()(val taskManager: TaskManager,
     } else {
       val job = jobOption.get
       val (_, _, attempt, _) = TaskUtils.parseTaskId(taskId)
-      jobsObserver.apply(JobStarted(job, taskStatus, attempt))
+      jobsObserver.apply(JobStarted(job, taskStatus, attempt, count))
 
       job match {
         case j: DependencyBasedJob =>
